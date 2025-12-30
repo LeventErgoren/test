@@ -1,6 +1,6 @@
 // Jenkinsfile (Windows-friendly PowerShell steps)
-// Stages required by YDG: checkout -> build -> unit tests(report) -> integration tests(report)
-// -> run on docker containers -> run selenium scenarios sequentially(report)
+// YDG stages: checkout -> build -> unit tests (report) -> integration tests (report)
+// -> run on docker containers -> run selenium scenarios sequentially (report)
 
 pipeline {
   agent any
@@ -13,7 +13,6 @@ pipeline {
   }
 
   environment {
-    // Keep logs consistent on Windows
     MAVEN_OPTS = '-Dfile.encoding=UTF-8'
   }
 
@@ -24,7 +23,6 @@ pipeline {
       }
     }
 
-    // ...existing code...
     stage('2-Build') {
       steps {
         powershell(script: '''
@@ -60,14 +58,17 @@ pipeline {
           $ErrorActionPreference = "Stop"
           Push-Location "demo"
           try {
-            # Run only unit tests in com.example.BirimTestleri
-            & .\\mvnw.cmd -B -Dtest=com.example.BirimTestleri.* test
+            & .\\mvnw.cmd -B "-Dtest=com.example.BirimTestleri.*" test
           } finally {
             Pop-Location
           }
         ''')
       }
-// ...existing code...
+      post {
+        always {
+          junit allowEmptyResults: true, testResults: 'demo/target/surefire-reports/*.xml'
+        }
+      }
     }
 
     stage('4-Integration Tests (Entegrasyon)') {
@@ -76,71 +77,73 @@ pipeline {
           $ErrorActionPreference = "Stop"
           Push-Location "demo"
           try {
-            # Run only integration tests in com.example.EntegrasyonTestleri
-            & .\\mvnw.cmd -B -Dtest=com.example.EntegrasyonTestleri.* test
+            & .\\mvnw.cmd -B "-Dtest=com.example.EntegrasyonTestleri.*" test
           } finally {
             Pop-Location
           }
         ''')
       }
-// ...existing code...
+      post {
+        always {
+          junit allowEmptyResults: true, testResults: 'demo/target/surefire-reports/*.xml'
+        }
+      }
     }
-// ...existing code...
 
     stage('5-Run System on Docker') {
       steps {
-        powershell '''
+        powershell(script: '''
           $ErrorActionPreference = "Stop"
 
           Write-Host "== docker compose up (build + detached) =="
-          # Prefer --wait if docker compose supports it; fall back otherwise.
-          docker compose -f docker-compose.yml up -d --build --wait
+          & docker compose -f docker-compose.yml up -d --build --wait
           if ($LASTEXITCODE -ne 0) {
             Write-Host "docker compose --wait not supported or failed; retrying without --wait"
-            docker compose -f docker-compose.yml up -d --build
+            & docker compose -f docker-compose.yml up -d --build
+            if ($LASTEXITCODE -ne 0) { throw "docker compose up failed (exit=$LASTEXITCODE)" }
           }
 
-          Write-Host "== basic health checks =="
+          Write-Host "== basic reachability checks (frontend+backend) =="
           $max = 30
-          for ($i=1; $i -le $max; $i++) {
+          for ($i = 1; $i -le $max; $i++) {
             try {
               Invoke-WebRequest -UseBasicParsing -TimeoutSec 3 http://localhost:1313/ | Out-Null
               Invoke-WebRequest -UseBasicParsing -TimeoutSec 3 http://localhost:9090/ | Out-Null
-              Write-Host "System is reachable (frontend+backend)."
+              Write-Host "System is reachable."
               break
             } catch {
               if ($i -eq $max) { throw }
               Start-Sleep -Seconds 2
             }
           }
-        '''
+        ''')
       }
     }
 
     stage('6-Selenium Tests (UI Scenarios)') {
       steps {
         script {
-          // Helper: run maven surefire for a specific test class or pattern
+          // Run selenium module tests using demo's Maven Wrapper
           def runSelenium = { String testSelector ->
-            powershell """
+            powershell(script: """
               \$ErrorActionPreference = 'Stop'
-              # Use backend Maven Wrapper so the agent doesn't need global Maven installed
-              .\\demo\\mvnw.cmd -B -f seleniumtestleri/pom.xml -Dtest=${testSelector} test
-            """
+              .\\demo\\mvnw.cmd -B -f seleniumtestleri\\pom.xml "-Dtest=${testSelector}" test
+            """)
           }
 
-          // 6.1 BagimsizTestler (all in one stage)
+          // 6.1 BagimsizTestler
           stage('6.1-Selenium: BagimsizTestler') {
             runSelenium('BagimsizTestler.*')
-            junit allowEmptyResults: true, testResults: 'seleniumtestleri/target/surefire-reports/*.xml'
           }
 
-          // 6.2+ Senaryo folders (Senaryo1..SenaryoN) discovered from filesystem, each test class as its own stage
+          // 6.2+ Senaryo folders: Senaryo1..SenaryoN
           def scenarioRoot = "${env.WORKSPACE}\\seleniumtestleri\\src\\test\\java"
+
           def scenarioFolders = powershell(returnStdout: true, script: """
             \$ErrorActionPreference = 'Stop'
             \$root = '${scenarioRoot}'
-            Get-ChildItem -Path \$root -Directory | Where-Object { \$_.Name -like 'Senaryo*' } |
+            Get-ChildItem -Path \$root -Directory |
+              Where-Object { \$_.Name -match '^Senaryo\\d+\$' } |
               Sort-Object { [int]([regex]::Match(\$_.Name, '\\d+').Value) } |
               ForEach-Object { \$_.Name }
           """).trim().split(/\r?\n/).findAll { it?.trim() }
@@ -148,21 +151,35 @@ pipeline {
           for (def scenarioName : scenarioFolders) {
             def scenarioPath = "${scenarioRoot}\\${scenarioName}"
 
-            // collect test class names in that scenario folder, sorted by filename
+            // Collect .java file names in that scenario folder; sort by numeric TestN if present, else by name
             def classNames = powershell(returnStdout: true, script: """
               \$ErrorActionPreference = 'Stop'
               Get-ChildItem -Path '${scenarioPath}' -Filter '*.java' -File |
-                Sort-Object Name |
-                ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension(\$_.Name) }
+                Select-Object @{
+                  Name='ClassName'; Expression={ [System.IO.Path]::GetFileNameWithoutExtension(\$_.Name) }
+                }, @{
+                  Name='Order'; Expression={
+                    \$m = [regex]::Match(\$_.Name, 'Test(\\d+)')
+                    if (\$m.Success) { [int]\$m.Groups[1].Value } else { 999999 }
+                  }
+                }, Name |
+                Sort-Object Order, Name |
+                ForEach-Object { \$_.ClassName }
             """).trim().split(/\r?\n/).findAll { it?.trim() }
 
+            // Each test class as its own stage: ensures Test1 -> Test2 -> ...
             for (def className : classNames) {
-              stage("6.x-Selenium: ${scenarioName} - ${className}") {
-                runSelenium("${scenarioName}.${className}")
-                junit allowEmptyResults: true, testResults: 'seleniumtestleri/target/surefire-reports/*.xml'
+              def fqcn = "${scenarioName}.${className}"
+              stage("6.${scenarioName}-${className}") {
+                runSelenium(fqcn)
               }
             }
           }
+        }
+      }
+      post {
+        always {
+          junit allowEmptyResults: true, testResults: 'seleniumtestleri/target/surefire-reports/*.xml'
         }
       }
     }
@@ -170,14 +187,17 @@ pipeline {
 
   post {
     always {
+      // Final safety: publish all known JUnit results (does not fail if none)
+      junit allowEmptyResults: true, testResults: 'demo/target/surefire-reports/*.xml, seleniumtestleri/target/surefire-reports/*.xml'
+
       // Always try to tear down containers (do not fail build if cleanup fails)
-      powershell '''
+      powershell(script: '''
         try {
           docker compose -f docker-compose.yml down -v
         } catch {
           Write-Host "docker compose down failed: $($_.Exception.Message)"
         }
-      '''
+      ''')
     }
   }
 }
