@@ -24,15 +24,16 @@ pipeline {
       }
     }
 
+    // ...existing code...
     stage('2-Build') {
       steps {
-        powershell '''
+        powershell(script: '''
           $ErrorActionPreference = "Stop"
 
           Write-Host "== Backend build (skip tests) =="
           Push-Location "demo"
           try {
-            .\mvnw.cmd -B -DskipTests clean package
+            & .\\mvnw.cmd -B -DskipTests clean package
           } finally {
             Pop-Location
           }
@@ -49,50 +50,42 @@ pipeline {
           } finally {
             Pop-Location
           }
-        '''
+        ''')
       }
     }
 
     stage('3-Unit Tests (Birim)') {
       steps {
-        powershell '''
+        powershell(script: '''
           $ErrorActionPreference = "Stop"
           Push-Location "demo"
           try {
             # Run only unit tests in com.example.BirimTestleri
-            .\mvnw.cmd -B -Dtest=com.example.BirimTestleri.* test
+            & .\\mvnw.cmd -B -Dtest=com.example.BirimTestleri.* test
           } finally {
             Pop-Location
           }
-        '''
+        ''')
       }
-      post {
-        always {
-          // Surefire XML reports
-          junit allowEmptyResults: true, testResults: 'demo/target/surefire-reports/*.xml'
-        }
-      }
+// ...existing code...
     }
 
     stage('4-Integration Tests (Entegrasyon)') {
       steps {
-        powershell '''
+        powershell(script: '''
           $ErrorActionPreference = "Stop"
           Push-Location "demo"
           try {
             # Run only integration tests in com.example.EntegrasyonTestleri
-            .\mvnw.cmd -B -Dtest=com.example.EntegrasyonTestleri.* test
+            & .\\mvnw.cmd -B -Dtest=com.example.EntegrasyonTestleri.* test
           } finally {
             Pop-Location
           }
-        '''
+        ''')
       }
-      post {
-        always {
-          junit allowEmptyResults: true, testResults: 'demo/target/surefire-reports/*.xml'
-        }
-      }
+// ...existing code...
     }
+// ...existing code...
 
     stage('5-Run System on Docker') {
       steps {
