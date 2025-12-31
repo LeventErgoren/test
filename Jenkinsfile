@@ -132,9 +132,4 @@ pipeline {
     }
   }
 
-  post {
-    always {
-      // Intentionally keep containers running after pipeline.
-    }
-  }
 }
