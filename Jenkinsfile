@@ -54,7 +54,7 @@ pipeline {
           $ErrorActionPreference = "Stop"
           Push-Location "demo"
           try {
-            & .\\mvnw.cmd -B "-Dtest=com.example.BirimTestleri.*" test
+            & .\\mvnw.cmd -B "-Dtest=com.example.BirimTestleri.*Test" test
           } finally {
             Pop-Location
           }
@@ -73,7 +73,7 @@ pipeline {
           $ErrorActionPreference = "Stop"
           Push-Location "demo"
           try {
-            & .\\mvnw.cmd -B "-Dtest=com.example.EntegrasyonTestleri.*" test
+            & .\\mvnw.cmd -B "-Dtest=com.example.EntegrasyonTestleri.*IntegrationTest" test
           } finally {
             Pop-Location
           }
