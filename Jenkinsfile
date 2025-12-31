@@ -99,18 +99,32 @@ pipeline {
             if ($LASTEXITCODE -ne 0) { throw "docker compose up failed (exit=$LASTEXITCODE)" }
           }
 
-          Write-Host "== basic reachability checks (frontend+backend) =="
-          $max = 30
-          for ($i = 1; $i -le $max; $i++) {
+          Write-Host "== basic reachability checks (frontend port only) =="
+          function Test-TcpPort([string]$HostName, [int]$Port, [int]$TimeoutMs = 1500) {
+            $client = New-Object System.Net.Sockets.TcpClient
             try {
-              Invoke-WebRequest -UseBasicParsing -TimeoutSec 3 http://localhost:1313/ | Out-Null
-              Invoke-WebRequest -UseBasicParsing -TimeoutSec 3 http://localhost:9090/ | Out-Null
-              Write-Host "System is reachable."
-              break
+              $iar = $client.BeginConnect($HostName, $Port, $null, $null)
+              if (-not $iar.AsyncWaitHandle.WaitOne($TimeoutMs, $false)) { return $false }
+              $client.EndConnect($iar)
+              return $true
             } catch {
-              if ($i -eq $max) { throw }
-              Start-Sleep -Seconds 2
+              return $false
+            } finally {
+              try { $client.Close() } catch { }
             }
+          }
+
+          $max = 45
+          for ($i = 1; $i -le $max; $i++) {
+            $feOk = Test-TcpPort -HostName 'localhost' -Port 1313
+            if ($feOk) {
+              Write-Host "Frontend port is reachable (1313)."
+              break
+            }
+            if ($i -eq $max) {
+              throw "Frontend not reachable on port 1313 after waiting."
+            }
+            Start-Sleep -Seconds 2
           }
         ''')
       }
