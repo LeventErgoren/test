@@ -24,3 +24,6 @@ public class FlatType {
 
     private BigDecimal defaultDuesAmount;
 }
+
+
+// yorum satırı
