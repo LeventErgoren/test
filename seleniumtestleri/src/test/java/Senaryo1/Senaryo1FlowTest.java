@@ -19,7 +19,6 @@ public class Senaryo1FlowTest {
 
     private static final String BASE_URL = "http://localhost:1313";
 
-    // Ortak kullanıcı (Test1-4)
     private static final String RESIDENT_FIRST_NAME = "Selenium";
     private static final String RESIDENT_LAST_NAME = "User";
     private static final String RESIDENT_EMAIL = "selenium1@mail.com";

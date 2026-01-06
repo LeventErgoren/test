@@ -20,10 +20,9 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String description; // Elektrik Faturası, Asansör Bakımı
+    private String description;
     private BigDecimal amount;
     private LocalDate expenseDate;
 
-    // Gider tipi veya kategorisi (Opsiyonel string olarak tutuyoruz)
     private String category; 
 }

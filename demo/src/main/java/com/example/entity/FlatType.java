@@ -20,7 +20,7 @@ public class FlatType {
     private Long id;
 
     @Column(nullable = false)
-    private String typeName; // Örn: "3+1", "2+1", "Dublex"
+    private String typeName;
 
-    private BigDecimal defaultDuesAmount; // Bu tip daireler için varsayılan aidat tutarı
+    private BigDecimal defaultDuesAmount;
 }

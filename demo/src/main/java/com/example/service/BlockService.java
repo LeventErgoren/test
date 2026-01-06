@@ -19,7 +19,6 @@ public class BlockService {
     }
 
     public Block saveBlock(Block block) {
-        // VALIDATION TESTİ: Aynı isimde blok olamaz
         if (blockRepository.existsByName(block.getName())) {
             throw new RuntimeException("Bu isimde bir blok zaten mevcut!");
         }
@@ -27,7 +26,6 @@ public class BlockService {
     }
 
     public void deleteBlock(Long id) {
-        // LOGIC TESTİ: Dolu blok silinemez
         if (!flatRepository.findByBlockId(id).isEmpty()) {
             throw new RuntimeException("İçinde daire bulunan bir blok silinemez! Önce daireleri taşıyın.");
         }

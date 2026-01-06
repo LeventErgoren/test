@@ -19,7 +19,7 @@ public class Block {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name; // Örn: "A Blok", "Manolya Apartmanı"
+    private String name;
 
-    private Integer totalFloors; // Toplam kat sayısı
+    private Integer totalFloors;
 }

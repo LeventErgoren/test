@@ -19,7 +19,6 @@ public class VehicleController {
         return ResponseEntity.ok(vehicleService.getAllVehicles());
     }
 
-    // SENARYO: Max 2 araç kuralı burada tetiklenir
     @PostMapping("/resident/{residentId}")
     public ResponseEntity<Vehicle> addVehicleToResident(@PathVariable Long residentId, @RequestBody Vehicle vehicle) {
         return ResponseEntity.ok(vehicleService.addVehicleToResident(residentId, vehicle));

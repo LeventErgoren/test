@@ -19,11 +19,11 @@ public class Flat {
     private Long id;
 
     @Column(nullable = false)
-    private Integer doorNumber; // Kapı No
+    private Integer doorNumber;
 
-    private Integer floor; // Kat
+    private Integer floor;
 
-    private boolean isEmpty; // Daire boş mu?
+    private boolean isEmpty;
 
     @ManyToOne
     @JoinColumn(name = "block_id", nullable = false)

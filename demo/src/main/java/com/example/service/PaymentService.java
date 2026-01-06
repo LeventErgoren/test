@@ -28,7 +28,6 @@ public class PaymentService {
         Dues dues = duesRepository.findById(duesId)
                 .orElseThrow(() -> new RuntimeException("Borç kaydı bulunamadı"));
 
-        // SENARYO 6: Ödeme Mantığı (Business Logic)
         List<Payment> existingPayments = paymentRepository.findByDuesId(duesId);
         
         BigDecimal totalPaid = existingPayments.stream()

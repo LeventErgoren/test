@@ -12,7 +12,4 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     
     List<Payment> findByDuesId(Long duesId);
 
-    // SENARYO: Bir borcun toplam ne kadarı ödendi? (SQL aggregate fonksiyonu kullanımı)
-    // Bunu Java Stream ile de yapabiliriz ama veritabanında yapmak performanstır.
-    // Şimdilik basit liste dönüyoruz, Service katmanında stream ile toplayacağız (Logic testi olsun diye).
 }

@@ -7,7 +7,6 @@ import java.util.List;
 
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
-    // SENARYO: Bir sakinin kaç aracı var? (Max 2 araç kuralı)
     int countByResidentId(Long residentId);
 
     boolean existsByPlateNumber(String plateNumber);

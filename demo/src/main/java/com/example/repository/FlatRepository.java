@@ -7,7 +7,6 @@ import java.util.List;
 
 @Repository
 public interface FlatRepository extends JpaRepository<Flat, Long> {
-    // Bir bloktaki daire sayısı (Kapasite kontrolü senaryosu için)
     int countByBlockId(Long blockId);
 
     List<Flat> findByBlockId(Long blockId);

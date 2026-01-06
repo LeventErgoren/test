@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
-    // Tarih aralığına göre gider raporu (Entegrasyon testi için)
     List<Expense> findByExpenseDateBetween(LocalDate startDate, LocalDate endDate);
 }

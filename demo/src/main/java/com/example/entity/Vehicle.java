@@ -19,9 +19,9 @@ public class Vehicle {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String plateNumber; // Plaka
+    private String plateNumber;
 
-    private String brand; // Marka (BMW, Fiat)
+    private String brand;
     private String model; 
 
     @ManyToOne

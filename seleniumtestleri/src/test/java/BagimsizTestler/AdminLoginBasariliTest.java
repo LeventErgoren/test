@@ -55,7 +55,6 @@ public class AdminLoginBasariliTest {
         WebElement submitButton = driver.findElement(By.cssSelector("button[type='submit']"));
         submitButton.click();
 
-        // Başarılı olunca /admin'e yönlenmeli ve Shell başlığı görünmeli
         wait.until(ExpectedConditions.urlContains("/admin"));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Yönetim Paneli')]")));
 

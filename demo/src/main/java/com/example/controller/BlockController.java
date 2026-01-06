@@ -24,7 +24,6 @@ public class BlockController {
         return ResponseEntity.ok(blockService.saveBlock(block));
     }
 
-    // SENARYO: Dolu blok silinemez testi buradan tetiklenir
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBlock(@PathVariable Long id) {
         blockService.deleteBlock(id);

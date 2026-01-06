@@ -7,12 +7,10 @@ import java.util.List;
 
 @Repository
 public interface DuesRepository extends JpaRepository<Dues, Long> {
-    
-    // SENARYO: Mükerrer aidat engelleme
+
     boolean existsByFlatIdAndMonthAndYear(Long flatId, int month, int year);
 
     java.util.Optional<Dues> findByFlatIdAndMonthAndYear(Long flatId, int month, int year);
 
-    // Bir daireye ait tüm borçlar
     List<Dues> findByFlatId(Long flatId);
 }

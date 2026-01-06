@@ -19,10 +19,10 @@ public class Dues {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int month; // 1-12
-    private int year;  // 2024
+    private int month;
+    private int year;
 
-    private BigDecimal amount; // Borç tutarı
+    private BigDecimal amount;
 
     @ManyToOne
     @JoinColumn(name = "flat_id", nullable = false)

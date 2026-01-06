@@ -24,8 +24,6 @@ public class TicketService {
         Resident resident = residentRepository.findById(residentId)
                 .orElseThrow(() -> new RuntimeException("Sakin bulunamadı"));
 
-        // SENARYO 7 (ZOR): Spam Koruması
-        // Açık statüde (OPEN) 3'ten fazla talebi varsa yenisini açtırma.
         int openTicketCount = ticketRepository.countByResidentIdAndStatus(residentId, "OPEN");
 
         if (openTicketCount >= 3) {

@@ -20,8 +20,8 @@ public class Staff {
     private Long id;
 
     private String fullName;
-    private String role; // Kapıcı, Güvenlik, Bahçıvan
+    private String role;
     private String phoneNumber;
 
-    private BigDecimal salary; // Maaş
+    private BigDecimal salary;
 }

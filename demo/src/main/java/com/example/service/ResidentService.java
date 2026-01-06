@@ -29,13 +29,10 @@ public class ResidentService {
             }
         }
 
-        // Validasyon
         if (residentRepository.existsByEmail(resident.getEmail())) {
             throw new RuntimeException("Bu email zaten kullanımda.");
         }
 
-        // SENARYO 2 (ZOR): Tek Ev Sahibi Kuralı
-        // Eğer eklenen kişi "Ev Sahibi" ise, o dairede başka ev sahibi var mı bak.
         if (resident.isOwner()) {
             boolean hasOwner = residentRepository.existsByFlatIdAndIsOwnerTrue(resident.getFlat().getId());
             if (hasOwner) {

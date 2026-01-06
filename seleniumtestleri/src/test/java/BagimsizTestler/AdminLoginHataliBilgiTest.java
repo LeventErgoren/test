@@ -55,7 +55,6 @@ public class AdminLoginHataliBilgiTest {
         WebElement submitButton = driver.findElement(By.cssSelector("button[type='submit']"));
         submitButton.click();
 
-        // Hata olunca Alert başlığı "Giriş başarısız" görünmeli
         WebElement alertTitle = wait.until(
             ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Giriş başarısız')]"))
         );

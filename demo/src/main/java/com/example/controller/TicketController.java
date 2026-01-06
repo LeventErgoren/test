@@ -19,8 +19,6 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getAllTickets());
     }
 
-    // SENARYO: Spam koruması (Max 3 açık talep) burada tetiklenir
-    // DİKKAT: Artık Resident ID'yi URL'den alıyoruz
     @PostMapping("/resident/{residentId}")
     public ResponseEntity<Ticket> createTicket(@PathVariable Long residentId, @RequestBody Ticket ticket) {
         return ResponseEntity.ok(ticketService.createTicket(residentId, ticket));

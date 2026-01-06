@@ -25,7 +25,6 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getPaymentsByDuesId(duesId));
     }
 
-    // SENARYO: Fazla ödeme kontrolü burada tetiklenir
     @PostMapping("/dues/{duesId}")
     public ResponseEntity<Payment> makePayment(@PathVariable Long duesId, @RequestBody Payment payment) {
         return ResponseEntity.ok(paymentService.makePayment(duesId, payment));

@@ -134,7 +134,6 @@ pipeline {
       steps {
         powershell(script: '''
           $ErrorActionPreference = "Stop"
-          # Tüm Selenium testlerini çalıştırır (BagimsizTestler + Senaryo*FlowTest).
           & .\\demo\\mvnw.cmd -B -f seleniumtestleri\\pom.xml test
         ''')
       }

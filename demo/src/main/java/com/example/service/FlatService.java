@@ -23,8 +23,6 @@ public class FlatService {
         Block block = blockRepository.findById(flat.getBlock().getId())
                 .orElseThrow(() -> new RuntimeException("Blok bulunamadı"));
 
-        // SENARYO 1 (ZOR): Kapasite Kontrolü
-        // Varsayalım her katta 4 daire var. Toplam kapasite = katsayısı * 4
         int maxCapacity = block.getTotalFloors() * 4;
         int currentFlatCount = flatRepository.countByBlockId(block.getId());
 

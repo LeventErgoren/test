@@ -101,7 +101,7 @@ public class ExpenseServiceTest {
     public void saveExpenseExpenseDateNull_shouldSetToTodayBeforeSave() {
         Expense expense = new Expense();
         expense.setExpenseDate(null);
-        expense.setAmount(null); // dağıtım akışına girmesin, sadece tarihin setlenmesini test edelim
+        expense.setAmount(null);
 
         ArgumentCaptor<Expense> expenseCaptor = ArgumentCaptor.forClass(Expense.class);
 
@@ -172,7 +172,6 @@ public class ExpenseServiceTest {
 
         expenseService.saveExpense(expense);
 
-        // 100 / 2 = 50, her daireye 50 eklenmeli
         Assertions.assertEquals(new BigDecimal("60.00"), d1.getAmount());
         Assertions.assertEquals(new BigDecimal("50.00"), d2.getAmount());
         verify(duesRepository, times(2)).save(any(Dues.class));
@@ -212,7 +211,6 @@ public class ExpenseServiceTest {
 
     @Test
     public void saveExpenseRemainderCents_shouldDistributeFairly() {
-        // 100.01 / 2 => 50.00 + 50.01 (1 kuruş artığı ilk daireye)
         Expense expense = new Expense();
         expense.setAmount(new BigDecimal("100.01"));
         expense.setExpenseDate(LocalDate.of(2025, 3, 15));
@@ -260,7 +258,6 @@ public class ExpenseServiceTest {
         charged.setId(1L);
         charged.setEmpty(false);
 
-        // List.of(null, charged) -> Java'da NPE atar. Null içeren liste için Arrays.asList kullanmalıyız.
         when(flatRepository.findAll()).thenReturn(Arrays.asList(null, charged));
 
         Dues dues = Dues.builder().id(1L).flat(charged).month(4).year(2025).amount(BigDecimal.ZERO).build();

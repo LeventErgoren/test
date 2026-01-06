@@ -20,7 +20,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal amount; // Ödenen miktar
+    private BigDecimal amount;
     private LocalDate paymentDate;
 
     @ManyToOne
@@ -29,5 +29,5 @@ public class Payment {
 
     @ManyToOne
     @JoinColumn(name = "resident_id")
-    private Resident resident; // Ödemeyi yapan kişi
+    private Resident resident;
 }

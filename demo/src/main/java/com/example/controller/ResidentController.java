@@ -24,7 +24,6 @@ public class ResidentController {
         return ResponseEntity.ok(residentService.getResidentById(id));
     }
 
-    // SENARYO: Tek ev sahibi kuralı burada tetiklenir
     @PostMapping
     public ResponseEntity<Resident> createResident(@RequestBody Resident resident) {
         return ResponseEntity.ok(residentService.saveResident(resident));

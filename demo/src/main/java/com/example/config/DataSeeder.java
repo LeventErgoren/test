@@ -29,7 +29,6 @@ public class DataSeeder {
     @Bean
     CommandLineRunner seedData() {
         return args -> {
-            // Admin hesabı
             if (adminRepository.count() == 0) {
                 Admin admin = new Admin();
                 admin.setUsername("admin");
@@ -37,12 +36,10 @@ public class DataSeeder {
                 adminRepository.save(admin);
             }
 
-            // Güvenlik: Daha önce veri varsa tekrar seed etme (tekrarlı kayıt/validasyon hatası çıkarmaz)
             if (blockRepository.count() > 0 || flatRepository.count() > 0 || flatTypeRepository.count() > 0) {
                 return;
             }
 
-            // Daire tipleri
             FlatType type2plus1 = FlatType.builder()
                     .typeName("2+1")
                     .defaultDuesAmount(new BigDecimal("750"))
@@ -60,7 +57,6 @@ public class DataSeeder {
             type3plus1 = flatTypeRepository.save(type3plus1);
             dublex = flatTypeRepository.save(dublex);
 
-            // 5 apartman/blok
             List<Block> blocks = new ArrayList<>();
             blocks.add(Block.builder().name("Manolya Apartmanı").totalFloors(5).build());
             blocks.add(Block.builder().name("Papatya Apartmanı").totalFloors(6).build());
@@ -69,17 +65,14 @@ public class DataSeeder {
             blocks.add(Block.builder().name("Zambak Apartmanı").totalFloors(5).build());
             blocks = blockRepository.saveAll(blocks);
 
-            // Daireler (bazıları DOLU olacak ki sakin kayıt ekranında uygun daire görünsün)
-            // Not: FlatService kapasite kontrolü POST sırasında çalışıyor; burada doğrudan repo ile seed ediyoruz.
             List<Flat> flats = new ArrayList<>();
             int doorBase = 1;
             for (int b = 0; b < blocks.size(); b++) {
                 Block block = blocks.get(b);
 
-                // Her blokta örnek 8 daire
                 for (int i = 0; i < 8; i++) {
                     int floor = (i / 2) + 1;
-                    boolean isEmpty = (i % 4 == 0); // 0,4 boş; diğerleri dolu
+                    boolean isEmpty = (i % 4 == 0);
 
                     FlatType ft = (i % 3 == 0) ? type2plus1 : (i % 3 == 1 ? type3plus1 : dublex);
 

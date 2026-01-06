@@ -19,7 +19,6 @@ public class DuesController {
         return ResponseEntity.ok(duesService.getAllDues());
     }
 
-    // SENARYO: Mükerrer aidat ve Boş daire kontrolü burada tetiklenir
     @PostMapping("/flat/{flatId}")
     public ResponseEntity<Dues> assignDuesToFlat(@PathVariable Long flatId, @RequestBody Dues dues) {
         return ResponseEntity.ok(duesService.assignDuesToFlat(flatId, dues));

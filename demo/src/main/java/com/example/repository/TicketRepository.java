@@ -7,8 +7,7 @@ import java.util.List;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    
-    // SENARYO: Spam Koruması -> Sakinin "OPEN" statüsündeki talep sayısı
+
     int countByResidentIdAndStatus(Long residentId, String status);
 
     List<Ticket> findByResidentId(Long residentId);

@@ -8,11 +8,9 @@ import java.util.Optional;
 
 @Repository
 public interface ResidentRepository extends JpaRepository<Resident, Long> {
-    
-    // SENARYO: Bir dairede zaten ev sahibi var mı? (Tek ev sahibi kuralı)
+
     boolean existsByFlatIdAndIsOwnerTrue(Long flatId);
 
-    // İletişim bilgisi kontrolü
     boolean existsByEmail(String email);
     boolean existsByPhoneNumber(String phoneNumber);
 

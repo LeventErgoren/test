@@ -124,7 +124,7 @@ public class ResidentServiceTest {
         Resident resident = new Resident();
         resident.setEmail("flatnull@gmail.com");
         resident.setOwner(false);
-        resident.setFlat(null); // ilk if'e girmemeli
+        resident.setFlat(null);
 
         when(residentRepository.existsByEmail("flatnull@gmail.com")).thenReturn(false);
         when(residentRepository.save(any(Resident.class))).thenReturn(resident);
@@ -183,7 +183,7 @@ public class ResidentServiceTest {
         resident.setOwner(false);
 
         Flat flat = new Flat();
-        flat.setId(null); // ilk if'e girmemeli: getId() == null
+        flat.setId(null);
         resident.setFlat(flat);
 
         when(residentRepository.existsByEmail("flatidnull@gmail.com")).thenReturn(false);
@@ -192,7 +192,7 @@ public class ResidentServiceTest {
         Resident dbResident = residentService.saveResident(resident);
 
         Assertions.assertEquals("flatidnull@gmail.com", dbResident.getEmail());
-        verifyNoInteractions(flatRepository); // findById/save hiç çağrılmamalı
+        verifyNoInteractions(flatRepository);
         verify(residentRepository, times(1)).save(any(Resident.class));
     }
 

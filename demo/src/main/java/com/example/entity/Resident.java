@@ -23,7 +23,7 @@ public class Resident {
     private String phoneNumber;
     private String email;
 
-    private boolean isOwner; // Ev sahibi mi, kiracı mı?
+    private boolean isOwner;
 
     @ManyToOne
     @JoinColumn(name = "flat_id")

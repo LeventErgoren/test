@@ -19,10 +19,9 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title; // "Musluk damlatıyor"
+    private String title;
     private String description;
-    
-    // Status: OPEN, IN_PROGRESS, CLOSED (String olarak tutuyoruz basit olsun diye)
+
     private String status; 
     
     private LocalDateTime createdDate;

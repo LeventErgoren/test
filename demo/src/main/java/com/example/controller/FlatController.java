@@ -24,7 +24,6 @@ public class FlatController {
         return ResponseEntity.ok(flatService.getFlatById(id));
     }
 
-    // SENARYO: Blok kapasite kontrolü burada tetiklenir
     @PostMapping
     public ResponseEntity<Flat> createFlat(@RequestBody Flat flat) {
         return ResponseEntity.ok(flatService.saveFlat(flat));

@@ -23,13 +23,11 @@ public class VehicleService {
         Resident resident = residentRepository.findById(residentId)
                 .orElseThrow(() -> new RuntimeException("Sakin bulunamadı"));
 
-        // SENARYO 3 (KLASİK): Max 2 Araç
         int currentCount = vehicleRepository.countByResidentId(residentId);
         if (currentCount >= 2) {
             throw new RuntimeException("Sakin başına en fazla 2 araç tanımlanabilir!");
         }
 
-        // Plaka Kontrolü
         if (vehicleRepository.existsByPlateNumber(vehicle.getPlateNumber())) {
              throw new RuntimeException("Bu plaka zaten sistemde kayıtlı!");
         }
